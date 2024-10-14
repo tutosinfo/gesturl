@@ -125,7 +125,7 @@
     }
     ?>
     <form action="index.php" method="post">
-        <input type="submit" name="clear_all" value="Vider toutes les URLs" onclick="return confirm('Êtes-vous sûr de vouloir supprimer toutes les URLs ?');">
+        <input type="submit" name="clear_all" value="Supprimer toutes les URLs" onclick="return confirm('Êtes-vous sûr de vouloir supprimer toutes les URLs ?');">
     </form>
     <table>
         <tr>
