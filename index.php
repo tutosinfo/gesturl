@@ -29,7 +29,7 @@
         $pdo = new PDO($dsn, $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (PDOException $e) {
-        die("Erreur de connexion à la base de données : " . $e->getMessage());
+        die("Erreur de connexion à la base de données : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
     }
 
     if (isset($_POST['clear_all'])) {
@@ -40,7 +40,7 @@
 
             echo "<p>Toutes les URLs ont été supprimées avec succès!</p>";
         } catch (PDOException $e) {
-            echo "<p>Erreur lors de la suppression des URLs : " . $e->getMessage() . "</p>";
+            echo "<p>Erreur lors de la suppression des URLs : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
         }
     }
 
@@ -54,7 +54,7 @@
 
             echo "<p>URL ajoutée avec succès!</p>";
         } catch (PDOException $e) {
-            echo "<p>Erreur lors de l'ajout de l'URL : " . $e->getMessage() . "</p>";
+            echo "<p>Erreur lors de l'ajout de l'URL : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
         }
     }
 
@@ -75,11 +75,11 @@
                                 $stmt = $pdo->prepare($sql);
                                 $stmt->execute([':url' => $feedUrl]);
                             } catch (PDOException $e) {
-                                echo "<p>Erreur lors de l'ajout de l'URL du flux : " . $e->getMessage() . "</p>";
+                                echo "<p>Erreur lors de l'ajout de l'URL du flux : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
                             }
                         }
                     } else {
-                        echo "<p>Impossible de charger le flux RSS: $url</p>";
+                        echo "<p>Impossible de charger le flux RSS: " . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . "</p>";
                     }
                 } else {
                     try {
@@ -87,7 +87,7 @@
                         $stmt = $pdo->prepare($sql);
                         $stmt->execute([':url' => $url]);
                     } catch (PDOException $e) {
-                        echo "<p>Erreur lors de l'ajout de l'URL : " . $e->getMessage() . "</p>";
+                        echo "<p>Erreur lors de l'ajout de l'URL : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
                     }
                 }
             }
@@ -97,7 +97,7 @@
     }
 
     if (isset($_GET['delete'])) {
-        $id = $_GET['delete'];
+        $id = (int)$_GET['delete'];
 
         try {
             $sql = "DELETE FROM `urls` WHERE `id` = :id";
@@ -106,12 +106,12 @@
 
             echo "<p>URL supprimée avec succès!</p>";
         } catch (PDOException $e) {
-            echo "<p>Erreur lors de la suppression de l'URL : " . $e->getMessage() . "</p>";
+            echo "<p>Erreur lors de la suppression de l'URL : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
         }
     }
 
     if (isset($_GET['reset'])) {
-        $id = $_GET['reset'];
+        $id = (int)$_GET['reset'];
 
         try {
             $sql = "UPDATE `urls` SET `hit` = 0 WHERE `id` = :id";
@@ -120,7 +120,7 @@
 
             echo "<p>Le compteur de hits de l'URL a été réinitialisé avec succès!</p>";
         } catch (PDOException $e) {
-            echo "<p>Erreur lors de la réinitialisation du compteur de hits : " . $e->getMessage() . "</p>";
+            echo "<p>Erreur lors de la réinitialisation du compteur de hits : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
         }
     }
     ?>
@@ -132,7 +132,7 @@
             <th>ID</th>
             <th>URL</th>
             <th>Hits</th>
-			<th>Site:</th>
+            <th>Site:</th>
             <th>Action</th>
         </tr>
         <?php
@@ -141,19 +141,22 @@
             $stmt = $pdo->query($sql);
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			    $safe_url = htmlspecialchars($row['url'], ENT_QUOTES, 'UTF-8');
-            $encoded_query = urlencode('site:' . $row['url']);
-            $google_search_url = "https://www.google.fr/search?q={$encoded_query}";
+                $safe_id = htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8');
+                $safe_url = htmlspecialchars($row['url'], ENT_QUOTES, 'UTF-8');
+                $safe_hit = htmlspecialchars($row['hit'], ENT_QUOTES, 'UTF-8');
+                $encoded_query = urlencode('site:' . $row['url']);
+                $google_search_url = "https://www.google.fr/search?q={$encoded_query}";
+                $safe_google_search_url = htmlspecialchars($google_search_url, ENT_QUOTES, 'UTF-8');
                 echo "<tr>";
-                echo "<td>{$row['id']}</td>";
-                echo "<td>{$row['url']}</td>";
-                echo "<td>{$row['hit']}</td>";
-				echo "<td><a href='{$google_search_url}' target='_blank'>Voir Indexation</a></td>";
-                echo "<td><a href='index.php?delete={$row['id']}'>Supprimer</a> | <a href='index.php?reset={$row['id']}'>Réinitialiser</a></td>";
+                echo "<td>{$safe_id}</td>";
+                echo "<td>{$safe_url}</td>";
+                echo "<td>{$safe_hit}</td>";
+                echo "<td><a href='{$safe_google_search_url}' target='_blank'>Voir Indexation</a></td>";
+                echo "<td><a href='index.php?delete={$safe_id}'>Supprimer</a> | <a href='index.php?reset={$safe_id}'>Réinitialiser</a></td>";
                 echo "</tr>";
             }
         } catch (PDOException $e) {
-            echo "<p>Erreur lors de la récupération des URLs : " . $e->getMessage() . "</p>";
+            echo "<p>Erreur lors de la récupération des URLs : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
         }
         ?>
     </table>
@@ -167,16 +170,16 @@
         $stmt = $pdo->query($sql);
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $popads_api_key = $row['popads_api_key'];
-            $campaign_id = $row['campaign_id'];
+            $popads_api_key = htmlspecialchars($row['popads_api_key'], ENT_QUOTES, 'UTF-8');
+            $campaign_id = htmlspecialchars($row['campaign_id'], ENT_QUOTES, 'UTF-8');
 
             $campaignInfo = getPopAdsCampaignInfo($popads_api_key, $campaign_id);
 
             if ($campaignInfo) {
                 echo "<p>Clé API PopAds : {$popads_api_key}</p>";
                 echo "<p>ID de la campagne : {$campaign_id}</p>";
-                echo "<p>État de la campagne : {$campaignInfo['status']}</p>";
-                echo "<p>Budget restant : {$campaignInfo['budget']} $</p>";
+                echo "<p>État de la campagne : " . htmlspecialchars($campaignInfo['status'], ENT_QUOTES, 'UTF-8') . "</p>";
+                echo "<p>Budget restant : " . htmlspecialchars($campaignInfo['budget'], ENT_QUOTES, 'UTF-8') . " $</p>";
             } else {
                 echo "<p>Erreur lors de la récupération des informations de la campagne. Veuillez vérifier la clé API et l'ID de la campagne.</p>";
             }
@@ -191,13 +194,14 @@
             $url_dir = '';
         }
         $full_url = 'https://' . $_SERVER['HTTP_HOST'] . $url_dir . '/random.php';
+        $safe_full_url = htmlspecialchars($full_url, ENT_QUOTES, 'UTF-8');
         ?>
         <p>
             Lien vers random.php (l'url à définir dans POPADS) :
-            <a href="<?php echo $full_url; ?>">
-                <?php echo $full_url; ?>
+            <a href="<?php echo $safe_full_url; ?>">
+                <?php echo $safe_full_url; ?>
             </a>
-            <button onclick="copyToClipboard('<?php echo $full_url; ?>')">COPIER</button>
+            <button onclick="copyToClipboard(<?php echo json_encode($full_url); ?>)">COPIER</button>
         </p>
     </div>
 
@@ -215,3 +219,5 @@
     <footer style="position: fixed; left: 0; bottom: 0; width: 100%; background-color: #f8f9fa; text-align: center; padding: 10px;">
 GestURL Version 4.0.1 (Octobre 2024)
 </footer>
+</body>
+</html>
