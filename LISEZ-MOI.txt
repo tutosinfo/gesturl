@@ -1,0 +1,28 @@
+Bienvenue sur GESTURL votre outil de gestion des URL pour POP-ADS.
+
+###### PRE REQUIS ###### 
+Avoir créé un compte POP ADS
+Avoir créé une campagne et 1 seule
+Avoir créé une base de donnée sur votre hébergeur
+
+###### Installation ###### 
+
+Pour fonctionner vous devez publier sur votre site (via FTP) l'ensemble des fichiers contenu dans le dossier GESTURL.
+Rendez-vous ensuite sur le fichier install.php (https://votre-domaine.tld/gesturl/install.php)
+Remplissez l'ensemble des champs (la clé API POPADS est fortement recommandée pour gérer la campagne)
+
+###### Fonctionnement des URLS ######
+
+Ajouter des URL dans le Champ URL et cliquer sur le bouton Ajouter. L'url apparaît dans la liste.
+Cliquer sur Supprimer pour supprimer l'URL en base de donnée.
+Les URL sont ouvertes aléatoirement lorsque l'on appel le fichier random.php (c'est l'url à ajouter dans votre campagne POPADS)
+
+###### Gestion de la campagne POP ADS ######
+Le bouton STOP POPADS permet de mettre en pause la campagne.
+Le bouton START POPADS permet de démarrer (ou redémarrer) la campagne.
+Le bouton Actualiser les infos permet d'actualiser les données de la campagne (état, budget restant)
+
+###### Support  ######
+L'outil a été réaliser avec ChatGPT (GPT4). Je ne suis pas un développeur donc l'outil n'est sûrement pas optimiser.
+Vous pouvez le modifier à votre sauce.
+En cas de questions me contacter sur le Discord NextLevel (@Julien Tutos-Informatique)
