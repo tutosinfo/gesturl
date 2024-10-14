@@ -16,10 +16,10 @@ if (isset($_POST['submit'])) {
     $popads_api_key = $_POST['popads_api_key'];
 
     $configContent = "<?php\n";
-    $configContent .= "\$host = '$host';\n";
-    $configContent .= "\$dbname = '$dbname';\n";
-    $configContent .= "\$username = '$username';\n";
-    $configContent .= "\$password = '$password';\n";
+    $configContent .= "\$host = '" . addslashes($host) . "';\n";
+    $configContent .= "\$dbname = '" . addslashes($dbname) . "';\n";
+    $configContent .= "\$username = '" . addslashes($username) . "';\n";
+    $configContent .= "\$password = '" . addslashes($password) . "';\n";
     $configContent .= "?>";
 
     file_put_contents('config.php', $configContent);
@@ -47,7 +47,7 @@ if (isset($_POST['submit'])) {
 
         // Vérifier si une clé API PopAds a été fournie
         if (!empty($popads_api_key)) {
-            $popads_url = "https://www.popads.net/api/campaign_list?key=" . $popads_api_key;
+            $popads_url = "https://www.popads.net/api/campaign_list?key=" . urlencode($popads_api_key);
             $popads_response = file_get_contents($popads_url);
             $popads_data = json_decode($popads_response, true);
 
@@ -59,8 +59,8 @@ if (isset($_POST['submit'])) {
                 $stmt->execute([':popads_api_key' => $popads_api_key, ':campaign_id' => $campaign_id]);
 
                 echo "<p>Installation réussie ! La table 'urls' et la table 'api' ont été créées.</p>";
-                echo "<p>Clé API PopAds enregistrée : {$popads_api_key}</p>";
-                echo "<p>ID de la campagne PopAds enregistré : {$campaign_id}</p>";
+                echo "<p>Clé API PopAds enregistrée : " . htmlspecialchars($popads_api_key, ENT_QUOTES, 'UTF-8') . "</p>";
+                echo "<p>ID de la campagne PopAds enregistré : " . htmlspecialchars($campaign_id, ENT_QUOTES, 'UTF-8') . "</p>";
             } else {
                 echo "<p>Erreur lors de la récupération des données de l'API PopAds. Veuillez vérifier votre clé API et réessayer.</p>";
             }
@@ -76,7 +76,7 @@ if (isset($_POST['submit'])) {
         echo '<p><a href="index.php">Accéder à GestURL</a></p>';
 
     } catch (PDOException $e) {
-        echo "<p>Erreur lors de la connexion à la base de données : " . $e->getMessage() . "</p>";
+        echo "<p>Erreur lors de la connexion à la base de données : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
     }
 } else {
 ?>
