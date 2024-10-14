@@ -30,4 +30,4 @@ Le bouton Actualiser les infos permet d'actualiser les données de la campagne (
 L'outil a été réaliser avec ChatGPT (GPT4). Je ne suis pas un développeur donc l'outil n'est sûrement pas optimiser.
 Vous pouvez le modifier à votre sauce.
 
-
+Visitez mon site : https://www.tutos-informatique.com
